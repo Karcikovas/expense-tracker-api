@@ -1,0 +1,5 @@
+wire_gen.go
+bin/
+vendor/
+.env
+.env.test
