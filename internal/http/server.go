@@ -1,26 +1,25 @@
 package http
 
 import (
-	"errors"
-	"example.com/m/v2/internal/http/middleware"
-	"example.com/m/v2/internal/logger"
+	//"expense-tracker-api/internal/http/middleware"
+	"expense-tracker-api/internal/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 )
 
 type Server struct {
-	logger      logger.Service
-	middlewares []middleware.MiddleWare
+	logger logger.Service
+	//middlewares []middleware.MiddleWare
 }
 
 func NewServer(
 	logger logger.Service,
-	middlewares []middleware.MiddleWare,
+	// middlewares []middleware.MiddleWare,
 ) *Server {
 	return &Server{
-		logger:      logger,
-		middlewares: middlewares,
+		logger: logger,
+		//middlewares: middlewares,
 	}
 }
 
@@ -30,15 +29,21 @@ func (s *Server) Start() {
 	ginEngine.UseRawPath = true
 	ginEngine.UnescapePathValues = false
 
-	s.registerMiddleware(ginEngine)
+	//s.registerMiddleware(ginEngine)
 
 	httpServer := http.Server{
-		Addr:              "8000",
+		Addr:              "localhost:8000",
 		Handler:           ginEngine,
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
-	if err := httpServer.ListenAndServe(); errors.Is(err, http.ErrServerClosed) {
+	ginEngine.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "Welcome Gin Server")
+	})
+
+	err := httpServer.ListenAndServe()
+
+	if err != nil {
 		s.logger.LogError(err.Error())
 	}
 
@@ -47,9 +52,9 @@ func (s *Server) Start() {
 }
 
 func (s *Server) registerMiddleware(r *gin.Engine) {
-	for _, middleware := range s.middlewares {
-		r.Use(middleware.MiddleWareFunc())
-	}
-
-	r.Use(gin.Logger())
+	//for _, middleware := range s.middlewares {
+	//	r.Use(middleware.MiddleWareFunc())
+	//}
+	//
+	//r.Use(gin.Logger())
 }
