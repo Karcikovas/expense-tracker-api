@@ -1,6 +1,9 @@
 package http
 
 import (
+	"expense-tracker-api/internal/config"
+	"log"
+
 	//"expense-tracker-api/internal/http/middleware"
 	"expense-tracker-api/internal/logger"
 	"github.com/gin-gonic/gin"
@@ -10,15 +13,18 @@ import (
 
 type Server struct {
 	logger logger.Service
+	config config.Config
 	//middlewares []middleware.MiddleWare
 }
 
 func NewServer(
 	logger logger.Service,
+	config config.Config,
 	// middlewares []middleware.MiddleWare,
 ) *Server {
 	return &Server{
 		logger: logger,
+		config: config,
 		//middlewares: middlewares,
 	}
 }
@@ -29,10 +35,12 @@ func (s *Server) Start() {
 	ginEngine.UseRawPath = true
 	ginEngine.UnescapePathValues = false
 
+	log.Println("localhost:" + s.config.HttpPort)
+
 	//s.registerMiddleware(ginEngine)
 
 	httpServer := http.Server{
-		Addr:              "localhost:8000",
+		Addr:              "localhost:" + s.config.HttpPort,
 		Handler:           ginEngine,
 		ReadHeaderTimeout: 10 * time.Second,
 	}

@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - './:/app'
+    env_file:
+      - .env
+    ports:
+      - ${HOST_HTTP_PORT}:${HTTP_PORT}
+    networks:
+      - tracker
+
+networks:
+  tracker:

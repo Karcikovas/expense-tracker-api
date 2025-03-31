@@ -14,7 +14,7 @@ build: deps
 
 PHONY: serve
 serve: build
-	bin/main
+	bin/main serve
 
 PHONY: dev
 dev: lint
