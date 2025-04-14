@@ -2,9 +2,9 @@ package http
 
 import (
 	"expense-tracker-api/internal/config"
+	"expense-tracker-api/internal/http/middleware"
 	"log"
 
-	//"expense-tracker-api/internal/http/middleware"
 	"expense-tracker-api/internal/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -12,20 +12,20 @@ import (
 )
 
 type Server struct {
-	logger logger.Service
-	config config.Config
-	//middlewares []middleware.MiddleWare
+	logger      logger.Service
+	config      config.Config
+	middlewares []middleware.MiddleWare
 }
 
 func NewServer(
 	logger logger.Service,
 	config config.Config,
-	// middlewares []middleware.MiddleWare,
+	middlewares []middleware.MiddleWare,
 ) *Server {
 	return &Server{
-		logger: logger,
-		config: config,
-		//middlewares: middlewares,
+		logger:      logger,
+		config:      config,
+		middlewares: middlewares,
 	}
 }
 
@@ -37,7 +37,7 @@ func (s *Server) Start() {
 
 	log.Println("localhost:" + s.config.HttpPort)
 
-	//s.registerMiddleware(ginEngine)
+	s.registerMiddleware(ginEngine)
 
 	httpServer := http.Server{
 		Addr:              "localhost:" + s.config.HttpPort,
@@ -60,9 +60,9 @@ func (s *Server) Start() {
 }
 
 func (s *Server) registerMiddleware(r *gin.Engine) {
-	//for _, middleware := range s.middlewares {
-	//	r.Use(middleware.MiddleWareFunc())
-	//}
-	//
-	//r.Use(gin.Logger())
+	for _, middleware := range s.middlewares {
+		r.Use(middleware.MiddleWareFunc())
+	}
+
+	r.Use(gin.Logger())
 }
