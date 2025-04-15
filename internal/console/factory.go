@@ -1,17 +1,13 @@
 package console
 
-type CommandAction func(args string)
+import "github.com/spf13/cobra"
 
-type Console struct {
-	Name        string
-	Description string
-	run         CommandAction
-}
+type CommandAction func(cmd *cobra.Command, args []string)
 
-func NewConsoleCommand(name string, description string, runCommand CommandAction) *Console {
-	return &Console{
-		Name:        name,
-		Description: description,
-		run:         runCommand,
+func NewConsoleCommand(name string, description string, runCommand CommandAction) *cobra.Command {
+	return &cobra.Command{
+		Use:   name,
+		Short: description,
+		Run:   runCommand,
 	}
 }
