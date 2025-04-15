@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"expense-tracker-api/internal/logger"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +19,8 @@ func NewLog(logger logger.Service) *Log {
 func (l *Log) MiddleWareFunc() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		defer func() {
-			l.logger.LogInfo(ctx.Request.RequestURI)
+			l.logger.LogInfo(fmt.Sprintf(`IP: %s`, ctx.RemoteIP()))
+			l.logger.LogInfo(fmt.Sprintf(`Request method: %s %s`, ctx.Request.Method, ctx.Request.RequestURI))
 		}()
 
 		ctx.Next()

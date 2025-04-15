@@ -1,7 +1,7 @@
 package config
 
 type Config struct {
-	HttpPort string `envconfig:"HTTP_PORT" required:"true"`
+	HttpPort string `envconfig:"HTTP_PORT" default:"8091" required:"true"`
 }
 
 func NewConfig() Config {
