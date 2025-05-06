@@ -1,5 +1,9 @@
 package router
 
-func ProvideRoutes() []Handler {
-	return []Handler{}
+import (
+	"expense-tracker-api/internal/http/hello"
+)
+
+func ProvideRoutes(hello *hello.RouteHandler) []RouteHandler {
+	return []RouteHandler{hello}
 }

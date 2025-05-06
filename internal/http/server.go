@@ -16,14 +16,14 @@ type Server struct {
 	logger      logger.Service
 	config      config.Config
 	middlewares []middleware.MiddleWare
-	routes      []router.Handler
+	routes      []router.RouteHandler
 }
 
 func NewServer(
 	logger logger.Service,
 	config config.Config,
 	middlewares []middleware.MiddleWare,
-	routes []router.Handler,
+	routes []router.RouteHandler,
 ) *Server {
 	return &Server{
 		logger:      logger,
@@ -49,14 +49,7 @@ func (s *Server) Start() {
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
-	for _, route := range s.routes {
-		handler := route.HttpHandler()
-		ginEngine.Handle(handler.HttpMethod, handler.RelativePath, handler.Handlers...)
-	}
-
-	ginEngine.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Welcome Gin Server")
-	})
+	s.registerRouter(ginEngine)
 
 	err := httpServer.ListenAndServe()
 
@@ -66,6 +59,12 @@ func (s *Server) Start() {
 
 	s.logger.LogInfo("HTTP server Started")
 
+}
+
+func (s *Server) registerRouter(r *gin.Engine) {
+	for _, route := range s.routes {
+		r.Handle(route.HttpHandler())
+	}
 }
 
 func (s *Server) registerMiddleware(r *gin.Engine) {
