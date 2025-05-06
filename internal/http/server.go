@@ -3,6 +3,7 @@ package http
 import (
 	"expense-tracker-api/internal/config"
 	"expense-tracker-api/internal/http/middleware"
+	"expense-tracker-api/internal/http/router"
 	"log"
 
 	"expense-tracker-api/internal/logger"
@@ -15,17 +16,20 @@ type Server struct {
 	logger      logger.Service
 	config      config.Config
 	middlewares []middleware.MiddleWare
+	routes      []router.Handler
 }
 
 func NewServer(
 	logger logger.Service,
 	config config.Config,
 	middlewares []middleware.MiddleWare,
+	routes []router.Handler,
 ) *Server {
 	return &Server{
 		logger:      logger,
 		config:      config,
 		middlewares: middlewares,
+		routes:      routes,
 	}
 }
 
@@ -43,6 +47,11 @@ func (s *Server) Start() {
 		Addr:              "localhost:" + s.config.HttpPort,
 		Handler:           ginEngine,
 		ReadHeaderTimeout: 10 * time.Second,
+	}
+
+	for _, route := range s.routes {
+		handler := route.HttpHandler()
+		ginEngine.Handle(handler.HttpMethod, handler.RelativePath, handler.Handlers...)
 	}
 
 	ginEngine.GET("/", func(c *gin.Context) {
