@@ -12,5 +12,17 @@ services:
     networks:
       - tracker
 
+  database:
+    image: postgres
+    env_file:
+      - .env
+    ports:
+      - ${POST_EXTERNAL_PORT}:${POST_INTERNAL_PORT}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - tracker
+
 networks:
   tracker:
